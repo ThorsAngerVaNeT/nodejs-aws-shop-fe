@@ -1,10 +1,10 @@
-service: node-in-aws-web
+service: node-in-aws-web-vanet
 
-frameworkVersion: '2'
+frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   # setup profile for AWS CLI.
   # profile: node-aws
 
@@ -17,12 +17,13 @@ plugins:
 
 custom:
   client:
-    bucketName: node-in-aws-web-bucket
+    bucketName: vanet-shop
     distributionFolder: build
-  s3BucketName: ${self:custom.client.bucketName}
-
+    
   ## Serverless-single-page-app-plugin configuration:
+  s3BucketName: ${self:custom.client.bucketName}
   s3LocalPath: ${self:custom.client.distributionFolder}/
+
 
 resources:
   Resources:
@@ -55,7 +56,7 @@ resources:
                   Fn::Join:
                     - ' '
                     - - 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity'
-                      - !Ref OriginAccessIdentity
+                      - Ref: OriginAccessIdentity
 
     OriginAccessIdentity:
       Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -69,16 +70,22 @@ resources:
       Properties:
         DistributionConfig:
           Origins:
-            - DomainName: !GetAtt WebAppS3Bucket.RegionalDomainName
+            - DomainName: 
+                'Fn::GetAtt': [ WebAppS3Bucket, RegionalDomainName ]
               ## An identifier for the origin which must be unique within the distribution
               Id: myS3Origin
-              ## In case you don't want to restrict the bucket access use CustomOriginConfig and remove S3OriginConfig
+              ## In case you don't want to restrict the bucket access use CustomOriginConfig and remove
               S3OriginConfig:
-                OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
-             # CustomOriginConfig:
-             #   HTTPPort: 80
-             #   HTTPSPort: 443
-             #   OriginProtocolPolicy: https-only
+                OriginAccessIdentity:
+                  Fn::Join:
+                    - ''
+                    -
+                      - 'origin-access-identity/cloudfront/'
+                      - Ref: OriginAccessIdentity
+            # CustomOriginConfig:
+            #   HTTPPort: 80
+            #   HTTPSPort: 443
+            #   OriginProtocolPolicy: https-only
           Enabled: true
           IPV6Enabled: true
           HttpVersion: http2
@@ -123,6 +130,8 @@ resources:
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
   Outputs:
     WebAppS3BucketOutput:
-      Value: !Ref WebAppS3Bucket
+      Value:
+        Ref: WebAppS3Bucket
     WebAppCloudFrontDistributionOutput:
-      Value: !GetAtt WebAppCloudFrontDistribution.DomainName
+      Value:
+        'Fn::GetAtt': [ WebAppCloudFrontDistribution, DomainName ]
