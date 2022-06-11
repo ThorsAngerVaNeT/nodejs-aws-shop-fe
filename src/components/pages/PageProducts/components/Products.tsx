@@ -45,7 +45,11 @@ export default function Products() {
       {products.map((product: Product, index: number) => (
         <Grid item key={product.id} xs={12} sm={6} md={4}>
           <Card className={classes.card}>
-            <CardMedia className={classes.cardMedia} image={`https://source.unsplash.com/random?sig=${index}`} title="Image title" />
+            <CardMedia
+              className={classes.cardMedia}
+              image={`https://d1wh94yq5jmkrj.cloudfront.net/${product.id}/${product.photos.slice(0, 1)}`}
+              title="Image title"
+            />
             <CardContent className={classes.cardContent}>
               <Typography gutterBottom variant="h5" component="h2">
                 {product.title}
