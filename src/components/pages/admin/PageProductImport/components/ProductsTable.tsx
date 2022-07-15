@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Link} from "react-router-dom";
-import API_PATHS from "constants/apiPaths";
+import { Link } from 'react-router-dom';
+import API_PATHS from 'constants/apiPaths';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,26 +9,21 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Button from "@material-ui/core/Button";
-import {formatAsPrice} from "utils/utils";
+import Button from '@material-ui/core/Button';
+import { formatAsPrice } from 'utils/utils';
 
 export default function ProductsTable() {
   const [products, setProducts] = useState<any>([]);
 
   useEffect(() => {
-    axios.get(`${API_PATHS.bff}/products`)
-      .then(res => setProducts(res.data));
+    axios.get(`${API_PATHS.bff}/products`).then(res => setProducts(res.data));
   }, []);
 
   const onDelete = (id: string) => {
-    axios.delete(`${API_PATHS.bff}/products/${id}`)
-      .then(() => {
-        axios.get(`${API_PATHS.bff}/products`)
-          .then(res => setProducts(res.data));
-        }
-      );
+    axios.delete(`${API_PATHS.bff}/products/${id}`).then(() => {
+      axios.get(`${API_PATHS.bff}/products`).then(res => setProducts(res.data));
+    });
   };
-
 
   return (
     <TableContainer component={Paper}>
@@ -36,7 +31,9 @@ export default function ProductsTable() {
         <TableHead>
           <TableRow>
             <TableCell>Title</TableCell>
-            <TableCell align="right">Description</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Last</TableCell>
+            <TableCell>Sole</TableCell>
             <TableCell align="right">Price</TableCell>
             <TableCell align="right">Count</TableCell>
             <TableCell align="right">Action</TableCell>
@@ -48,7 +45,13 @@ export default function ProductsTable() {
               <TableCell component="th" scope="row">
                 {product.title}
               </TableCell>
-              <TableCell align="right">{product.description}</TableCell>
+              <TableCell>
+                {product.description.split('\\n').map((p: string, idx: number) => (
+                  <p key={idx}>{p}</p>
+                ))}
+              </TableCell>
+              <TableCell>{product.last}</TableCell>
+              <TableCell>{product.sole}</TableCell>
               <TableCell align="right">{formatAsPrice(product.price)}</TableCell>
               <TableCell align="right">{product.count}</TableCell>
               <TableCell align="right">
