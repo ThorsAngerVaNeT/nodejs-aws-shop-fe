@@ -7,7 +7,7 @@ export type Product = {
   price: number;
   last: string;
   sole: string;
-  photos: [string];
+  image_url: string;
 };
 
 export const ProductSchema = Yup.object().shape({

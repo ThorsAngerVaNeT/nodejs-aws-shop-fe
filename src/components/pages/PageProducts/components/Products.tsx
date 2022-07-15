@@ -13,6 +13,8 @@ import axios from 'axios';
 import API_PATHS from 'constants/apiPaths';
 // import productList from "./productList.json";
 
+const NO_PHOTO_URL = 'https://d1wh94yq5jmkrj.cloudfront.net/no-photo.png';
+
 const useStyles = makeStyles(theme => ({
   card: {
     height: '100%',
@@ -45,11 +47,7 @@ export default function Products() {
       {products.map((product: Product, index: number) => (
         <Grid item key={product.id} xs={12} sm={6} md={4}>
           <Card className={classes.card}>
-            <CardMedia
-              className={classes.cardMedia}
-              image={`https://d1wh94yq5jmkrj.cloudfront.net/${product.id}/${product.photos.slice(0, 1)}`}
-              title="Image title"
-            />
+            <CardMedia className={classes.cardMedia} image={`${product.image_url || NO_PHOTO_URL}`} title="Image title" />
             <CardContent className={classes.cardContent}>
               <Typography gutterBottom variant="h5" component="h2">
                 {product.title}
