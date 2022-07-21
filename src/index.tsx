@@ -12,9 +12,15 @@ axios.interceptors.response.use(
   response => {
     return response;
   },
-  function(error) {
-    if (error?.response?.status === 400) {
-      alert(error.response.data?.data);
+  function (error) {
+    const status = error?.response?.status;
+    const data = error?.response?.data?.data;
+    const message = error?.response?.data?.message;
+    if (status === 400) {
+      alert(data);
+    }
+    if (status === 401 || status === 403) {
+      alert(message);
     }
 
     return Promise.reject(error?.response ?? error);
